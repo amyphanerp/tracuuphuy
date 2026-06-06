@@ -27,9 +27,9 @@ function parseKey(text) {
   if (p.length !== 4) return null;
   const [rawD, h, b, c] = p;
   const dNum = rawD.replace('D','');
-  let density;
-  if (dNum.startsWith('0')) density = '0.' + dNum.slice(1) + 'D';
-  else density = '0.' + dNum + 'D';
+  // 085->0.085D, 11->0.11D
+  const dFloat = parseInt(dNum,10) / 1000;
+  const density = dFloat.toFixed(3).replace(/0+$/, '').replace(/\.\$/, '') + 'D';
   const cNum = c.replace('M','');
   let cd;
   if (cNum.length===1) cd = cNum+'M';
