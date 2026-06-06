@@ -23,19 +23,30 @@ const LOOKUP = {
 const CDI = {'2m':0,'17m':1,'147m':2};
 
 function parseKey(text) {
-  const p = text.trim().split('|');
-  if (p.length !== 4) return null;
-  const [rawD, h, b, c] = p;
-  const dNum = rawD.replace('D','');
-  // 085->0.085D, 11->0.11D
-  const dFloat = parseInt(dNum,10) / 1000;
-  const density = dFloat.toFixed(3).replace(/0+$/, '').replace(/\.\$/, '') + 'D';
-  const cNum = c.replace('M','');
-  let cd;
-  if (cNum.length===1) cd = cNum+'M';
-  else if (cNum.length===2) cd = cNum[0]+'.'+cNum[1]+'M';
-  else cd = cNum[0]+'.'+cNum.slice(1)+'M';
-  return { density, h, isHB: b==='HB', cd, key: text.trim() };
+  const t = text.trim();
+  // Format 1: short key  085D|25C|NK|2M
+  const p = t.split('|');
+  if (p.length === 4) {
+    const [rawD, h, b, c] = p;
+    const dNum = rawD.replace('D','');
+    const dFloat = parseInt(dNum,10) / 1000;
+    const density = dFloat.toFixed(3).replace(/0+$/, '').replace(/\.$/, '') + 'D';
+    const cNum = c.replace('M','');
+    let cd;
+    if (cNum.length===1) cd = cNum+'M';
+    else if (cNum.length===2) cd = cNum[0]+'.'+cNum[1]+'M';
+    else cd = cNum[0]+'.'+cNum.slice(1)+'M';
+    return { density, h, isHB: b==='HB', cd, key: t };
+  }
+  // Format 2: long text  EcoLT  0.13D - 25C - CSĐ HB / SEEDPEARL - 2M
+  const dMatch = t.match(/(\d+\.\d+)D/);
+  const hMatch = t.match(/(\d+[-\d]*C|78-90F)/);
+  const isHB = /HB/.test(t);
+  const khMatch = t.match(/[-\/]\s*(\d+(?:\.\d+)?M)/i);
+  if (dMatch && hMatch && khMatch) {
+    return { density: dMatch[1]+'D', h: hMatch[1], isHB, cd: khMatch[1].toUpperCase(), key: t };
+  }
+  return null;
 }
 
 function calcPhuy(parsed, bun) {
