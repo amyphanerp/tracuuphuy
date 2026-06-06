@@ -99,7 +99,7 @@ export default function App() {
         (text) => { onScan(text); },
         () => {}
       );
-      setScanMsg('Hướng camera vào QR code giữa phiếu');
+      setScanMsg('Hướng camera vào QR code trên phiếu');
     } catch(e) {
       setScanMsg('❌ ' + e.message);
       setScanning(false);
@@ -118,7 +118,7 @@ export default function App() {
     await stopScan();
     const p = parseKey(text);
     if (!p) {
-      setScanMsg('⚠️ Scan QR ở giữa phiếu (phần hóa chất), không phải góc trên');
+      setScanMsg('❌ Không đọc được QR. Thử lại nhé!');
       return;
     }
     setParsed(p);
