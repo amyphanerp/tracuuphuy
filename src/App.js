@@ -89,6 +89,7 @@ export default function App() {
   const [step, setStep] = useState('scan'); // scan | info | result
   const [parsed, setParsed] = useState(null);
   const [bun, setBun] = useState('');
+  const [bunInput, setBunInput] = useState('');
   const [scanMsg, setScanMsg] = useState('');
   const [scanning, setScanning] = useState(false);
   const scannerRef = useRef(null);
@@ -140,6 +141,7 @@ export default function App() {
     await stopScan();
     setParsed(null);
     setBun('');
+    setBunInput('');
     setScanMsg('');
     setStep('scan');
   };
@@ -205,7 +207,9 @@ export default function App() {
               <input
                 type="number" inputMode="numeric"
                 style={S.input} placeholder="0" value={bun}
-                onChange={e => setBun(e.target.value)}
+                onChange={e => setBunInput(e.target.value)}
+                onKeyDown={e => { if(e.key==='Enter') setBun(bunInput); }}
+                value={bunInput}
                 autoFocus
               />
             </div>
